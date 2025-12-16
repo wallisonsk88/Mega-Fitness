@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Assist - Seu Treino Inteligente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="manifest" href="manifest.json">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="main-header">
+            <h1>Mega Fitness</h1>
+            <p>Seu assistente de treino pessoal</p>
+        </header>
+
+        <main id="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view-section">
+                <div class="welcome-section">
+                    <h2>Olá, Wallison! 👋</h2>
+                    <p>Pronto para superar seus limites hoje?</p>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-streak">0</span>
+                            <span class="stat-label">Sequência (Dias)</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💪</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">Treinos Totais</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-last">--</span>
+                            <span class="stat-label">Último Treino</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-section glass">
+                    <h3>Frequência Semanal</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+                <button id="start-workout-btn" class="action-btn-large">
+                    INICIAR TREINO
+                </button>
+            </div>
+
+            <!-- Workout Selection View (Previously Home) -->
+            <div id="week-view" class="view-section hidden">
+                <div class="section-header" style="justify-content: space-between; align-items: center;">
+                    <button class="icon-btn" onclick="navigateTo('dashboard')">🏠</button>
+                    <h2 style="margin: 0;">Selecione o Treino</h2>
+                    <button class="icon-btn" onclick="resetWeeklyProgress()" style="color: #ef4444;"
+                        title="Reiniciar Semana">🔄</button>
+                </div>
+                <div id="week-grid" class="week-grid">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- Workout Detail View -->
+            <div id="workout-detail-view" class="view-section hidden">
+                <!-- Content injected via JS -->
+            </div>
+        </main>
+
+        <!-- Modal para detalhes do exercício -->
+        <div id="exercise-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <img id="modal-image" src="" alt="Demonstração do exercício" class="exercise-media">
+                <h2 id="modal-title">Nome do Exercício</h2>
+                <div class="exercise-info">
+                    <p><strong>Séries:</strong> <span id="modal-sets"></span></p>
+                    <p><strong>Repetições:</strong> <span id="modal-reps"></span></p>
+                </div>
+
+                <div id="video-container" class="video-container hidden">
+                    <!-- Iframe injetado via JS -->
+                </div>
+
+                <p id="modal-description" class="exercise-description"></p>
+                <div class="timer-container">
+                    <div class="timer-display" id="timer-display">00:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" onclick="setTimer(30)">30s</button>
+                        <button class="timer-btn" onclick="setTimer(60)">60s</button>
+                        <button class="timer-btn" onclick="setTimer(90)">90s</button>
+                    </div>
+                    <div class="timer-actions">
+                        <button id="timer-toggle" class="timer-action-btn" onclick="toggleTimer()">Iniciar</button>
+                        <button class="timer-action-btn secondary" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+                <button class="btn-complete">Concluir Exercício</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js?v=4"></script>
+    <script src="catalog.js?v=4"></script>
+    <script src="app.js?v=4"></script>
+
+    <!-- Modal Feedback -->
+    <div id="feedback-modal" class="modal hidden">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-modal" id="close-feedback">&times;</span>
+            <h2>Treino Finalizado!</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 25px;">Como você se sentiu hoje?</p>
+
+            <div class="feedback-options">
+                <button class="feedback-btn" onclick="submitFeedback('bad')">
+                    <span style="font-size: 2.5rem;">😫</span>
+                    <span>Difícil</span>
+                </button>
+                <button class="feedback-btn" onclick="submitFeedback('ok')">
+                    <span style="font-size: 2.5rem;">😐</span>
+                    <span>Normal</span>
+                </button>
+                <button class="feedback-btn" onclick="submitFeedback('good')">
+                    <span style="font-size: 2.5rem;">🤩</span>
+                    <span>Excelente</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Catálogo -->
+    <div id="catalog-modal" class="modal hidden">
+        <div class="modal-content catalog-content">
+            <span class="close-modal" id="close-catalog">&times;</span>
+            <h2>Adicionar Exercício</h2>
+
+            <div class="catalog-filters">
+                <button class="filter-btn active" onclick="filterCatalog('Todos')">Todos</button>
+                <button class="filter-btn" onclick="filterCatalog('Peito')">Peito</button>
+                <button class="filter-btn" onclick="filterCatalog('Costas')">Costas</button>
+                <button class="filter-btn" onclick="filterCatalog('Pernas')">Pernas</button>
+                <button class="filter-btn" onclick="filterCatalog('Ombros')">Ombros</button>
+                <button class="filter-btn" onclick="filterCatalog('Braços')">Braços</button>
+            </div>
+
+            <div id="catalog-list" class="catalog-list">
+                <!-- Injetado via JS -->
+            </div>
+
+            <div class="catalog-custom-opt">
+                <p>Não encontrou?</p>
+                <button onclick="addCustomExerciseFromCatalog()" class="text-btn">Criar Manualmente</button>
+            </div>
+        </div>
+    </div>
+    <!-- Descrição no Histórico -->
+    <div id="history-modal" class="modal hidden">
+        <div class="modal-content" style="text-align: center;">
+            <span class="close-modal" id="close-history">&times;</span>
+            <div id="history-content">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
