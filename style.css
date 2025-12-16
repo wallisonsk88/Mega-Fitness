@@ -643,15 +643,25 @@ body {
 }
 
 .filter-btn {
+    -webkit-appearance: none;
+    appearance: none;
     background: transparent;
     border: 1px solid var(--text-secondary);
     color: var(--text-secondary);
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 20px;
     white-space: nowrap;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 500;
     transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    text-decoration: none;
+    margin-bottom: 2px;
+    /* Fix for potential clipping */
 }
 
 .filter-btn.active,
